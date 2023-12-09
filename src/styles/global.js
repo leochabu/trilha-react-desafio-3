@@ -11,4 +11,10 @@ export const GlobalStyle = createGlobalStyle`
     background-color: #1E192C;
     color: #FFFFFF;
   }
+
+  form .error-message{
+    color: darkred !important;
+    margin-bottom: 10px;
+    margin-top: -10px;
+  }
 `

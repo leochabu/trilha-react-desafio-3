@@ -10,9 +10,9 @@ const Input = ({leftIcon, name, control, ...rest}) => {
     <InputContainer>
         {leftIcon ? (<IconContainer>{leftIcon}</IconContainer>) : null}
         <Controller
-        name={name}
-        control={control}
-        render={({ field }) =>  <InputText {...field} {...rest} />}
+            name={name}
+            control={control}
+            render={({ field }) =>  <InputText {...field} {...rest} />}
       />
        
     </InputContainer>

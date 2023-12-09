@@ -9,6 +9,9 @@ import { useForm } from "react-hook-form";
 
 
 import { Container, Title, Column, TitleLogin, SubtitleLogin, EsqueciText, CriarText, Row, Wrapper } from './styles';
+import {hashed} from "../../services/hasher";
+import {useState} from "react";
+import {FormCustomMessage} from "../../components/FormCustomMessage";
 
 const Login = () => {
 
@@ -19,18 +22,30 @@ const Login = () => {
         mode: 'onChange',
     });
 
+    const [formMessage, setFormMessage] = useState('')
+    const [formMessageType, setFormMessageType] = useState('')
+
     const onSubmit = async (formData) => {
         try{
-            const {data} = await api.get(`/users?email=${formData.email}&senha=${formData.senha}`);
+            const {data} = await api.get(`/users?email=${formData.email}&senha=${hashed(formData.senha)}`);
             
             if(data.length && data[0].id){
-                navigate('/feed') 
+                setFormMessageType('success')
+                setFormMessage('Login realizado com sucesso! Redirecionando para sua conta...')
+                setTimeout(() => {
+                    navigate('/feed')
+                },3000)
                 return
             }
 
-            alert('Usuário ou senha inválido')
+            setFormMessageType('error')
+            setFormMessage('Usuário ou senha inválido')
+
         }catch(e){
             //TODO: HOUVE UM ERRO
+            console.log(e)
+            setFormMessageType(`error`)
+            setFormMessage('Erro ao realizar login, tente novamente mais tarde')
         }
     };
 
@@ -45,7 +60,7 @@ const Login = () => {
             </Column>
             <Column>
                 <Wrapper>
-                <TitleLogin>Faça seu cadastro</TitleLogin>
+                <TitleLogin>Entrar</TitleLogin>
                 <SubtitleLogin>Faça seu login e make the change._</SubtitleLogin>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Input placeholder="E-mail" leftIcon={<MdEmail />} name="email"  control={control} />
@@ -54,9 +69,12 @@ const Login = () => {
                     {errors.senha && <span>Senha é obrigatório</span>}
                     <Button title="Entrar" variant="secondary" type="submit"/>
                 </form>
+
+                <FormCustomMessage  message={formMessage} messageType={formMessageType} />
+
                 <Row>
                     <EsqueciText>Esqueci minha senha</EsqueciText>
-                    <CriarText>Criar Conta</CriarText>
+                    <CriarText onClick={() => navigate('/register')}>Criar Conta</CriarText>
                 </Row>
                 </Wrapper>
             </Column>
